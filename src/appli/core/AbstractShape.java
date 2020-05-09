@@ -1,6 +1,7 @@
 package appli.core;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 public abstract class AbstractShape implements Shape {
@@ -101,6 +102,27 @@ public abstract class AbstractShape implements Shape {
     @Override
     public Set<Shape> getShapes() {
         return Collections.emptySet();
+    }
+
+    public List<Point> rotation(List<Point> pointList) {
+        for (int i = 0; i < pointList.size(); i++) {
+        		Point p = this.rotatePoint(pointList.get(i), getCenter(), getRotation());
+            pointList.set(i, p);
+        }
+        return pointList;
+    }
+
+    public Point rotatePoint(Point pt, Point center, double angleDeg) {
+        
+        double dx = (pt.getX() - center.getX()); 
+        double dy = (pt.getY() - center.getY()); 
+        
+        double angleRad = Math.toRadians(angleDeg);
+
+        double pX = center.getX() + (double) (dx * Math.cos(angleRad) - dy * Math.sin(angleRad));
+        double pY = center.getY() + (double) (dx * Math.sin(angleRad) + dy * Math.cos(angleRad));
+                
+        return new Point((int)pX, (int)pY);
     }
 
 }

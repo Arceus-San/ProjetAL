@@ -1,6 +1,9 @@
 package appli.core;
 
-public class Polygon extends AbstractShape{
+import java.util.ArrayList;
+import java.util.List;
+
+public class Polygon extends AbstractShape {
 
     private int nbSides;
     private double sideSize;
@@ -37,6 +40,24 @@ public class Polygon extends AbstractShape{
     public void setNbSides(int nb_sides){
         this.nbSides=nb_sides;
     }
+
+    /**
+     * Create Polygon points method
+     */
+    public List<Point> generatePolygonPoints(Point center, int nSides, float sideSize){
+        List<Point> points = new ArrayList<Point>();
+        for(int x = 0; x<nSides; x++) {
+            Point p = new Point(
+                    (int)(center.getX() + sideSize/(2.0*Math.sin(Math.PI/nSides)) * Math.cos(2.0*Math.PI*x/nSides)), 
+                    (int)(center.getY() + sideSize/(2.0*Math.sin(Math.PI/nSides)) * Math.sin(2.0*Math.PI*x/nSides))
+            );
+            points.add(p);
+        }
+        
+        points = rotation(points);
+        
+        return points;
+}
 
     @Override
     public void draw(Object o) {
