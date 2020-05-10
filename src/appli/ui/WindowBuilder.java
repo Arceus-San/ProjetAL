@@ -6,6 +6,7 @@ import javafx.scene.shape.Shape;
 import javafx.scene.web.PromptData;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javafx.application.Application;
@@ -14,6 +15,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToolBar;
@@ -26,6 +28,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class WindowBuilder extends Application {
@@ -33,6 +36,8 @@ public class WindowBuilder extends Application {
     private HashMap<Shape,appli.core.Shape> shapes_toolbar;
     private Shape shape_dragged;
     private double drag_x,drag_y;
+    private ArrayList<appli.core.Shape> shapes_canvas;
+    private ArrayList<int[]> couleurs;
 
 
 
@@ -40,6 +45,19 @@ public class WindowBuilder extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         shapes_toolbar = new HashMap<Shape,appli.core.Shape>();
+        shapes_canvas = new ArrayList<appli.core.Shape>();
+        couleurs = new ArrayList<int[]>();
+        int[] black = {0, 0, 0};
+        int[] red = {255, 0, 0};
+        int[] green = {0, 255, 0};
+        int[] blue = {0, 0, 255};
+        int[] purple = {160, 32, 255};
+        couleurs.add(black);
+        couleurs.add(red);
+        couleurs.add(green);
+        couleurs.add(blue);
+        couleurs.add(purple);
+
 
         Button save = new Button("Save");
         Button load = new Button("Load");
@@ -80,12 +98,23 @@ public class WindowBuilder extends Application {
 
         Rectangle rectangle = new Rectangle(50, 20);
         appli.core.Rectangle rec = new appli.core.Rectangle(0, 0, 50, 20);
+        rec.modifyColor(0, 0, 0);
         rectangle.setOnMousePressed(e -> {
             System.out.println("Rectangle");
             shape_dragged=rectangle;
         });
         shapes.getItems().addAll(rectangle);
         shapes_toolbar.put(rectangle, rec);
+        Rectangle rectangle2 = new Rectangle(50, 20);
+        rectangle2.setFill(Color.RED);
+        appli.core.Rectangle rec2 = new appli.core.Rectangle(0, 0, 100, 40);
+        rec2.modifyColor(255, 0, 0);
+        rectangle2.setOnMousePressed(e -> {
+            System.out.println("Rectangle2");
+            shape_dragged=rectangle2;
+        });
+        shapes.getItems().addAll(rectangle2);
+        shapes_toolbar.put(rectangle2, rec2);
 
         shapes.setOrientation(Orientation.VERTICAL);
 
@@ -104,12 +133,12 @@ public class WindowBuilder extends Application {
 
         
 
-        StackPane holder = new StackPane();
+        //StackPane holder = new StackPane();
         Canvas canvas = new Canvas(300,300);
 
-        holder.getChildren().add(canvas);
+        //holder.getChildren().add(canvas);
 
-        holder.setStyle("-fx-background-color: red");
+        //holder.setStyle("-fx-background-color: red");
 
         AnchorPane anchorPane = new AnchorPane();
         
@@ -125,16 +154,15 @@ public class WindowBuilder extends Application {
 
         
 
-        VBox vbox = new VBox(toolbar,anchorPane);
 
         VBox vbox2 = new VBox(shapes,imageView);
         
 
-        vbox.setVgrow(anchorPane, Priority.ALWAYS);
-        vbox2.setVgrow(shapes, Priority.ALWAYS);
+        //vbox2.setVgrow(shapes, Priority.ALWAYS);
+        //vbox2.setVgrow(imageView, Priority.ALWAYS);
 
-        HBox hbox = new HBox(vbox2,holder);
-        hbox.setHgrow(holder, Priority.ALWAYS);
+        HBox hbox = new HBox(vbox2,canvas);
+        hbox.setHgrow(canvas, Priority.ALWAYS);
 
         VBox vbox3 = new VBox(toolbar,hbox);
         vbox3.setVgrow(hbox, Priority.ALWAYS);
@@ -153,14 +181,8 @@ public class WindowBuilder extends Application {
 
 
         Scene scene = new Scene(vbox3,640,400);
-        scene.setOnMouseClicked(e -> {
-            //System.out.println("x: "+e.getX()+" y: "+e.getY());
-            if(e.getX()==drag_x && e.getY()==drag_y){
-                System.out.println("C'était juste un click");
-            }else if(e.getX()>=0 && e.getX()<=shapes.getWidth() && e.getY()>toolbar.getHeight() && e.getY()<=shapes.getHeight()){
-                System.out.println("Forme ajoutée à la toolbar");
-            }
-        });
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
 
         primaryStage.widthProperty().addListener(e-> {
             System.out.println("Width :"+primaryStage.getWidth());
@@ -182,11 +204,39 @@ public class WindowBuilder extends Application {
         scene.setOnMouseReleased(e -> {
             if(e.getX()==drag_x && e.getY()==drag_y){
                 System.out.println("C'était juste un click");
+                //System.out.println("Clic x: "+e.getX()+" y: "+e.getY());
+                //System.out.println("Clic sans toolbar  x: "+(int)(e.getX()-shapes.getWidth())+" y: "+(int)(e.getY()-toolbar.getHeight()));
+                appli.core.Shape temp=null;
+                for(appli.core.Shape shape : shapes_canvas){
+                    if(shape.pointIn((int)(e.getX()-shapes.getWidth()), (int)(e.getY()-toolbar.getHeight()))){
+                        temp=shape;
+                    }
+                }
+                //System.out.println(temp);
+                if(temp != null) {
+                    int nb = (int)(Math.random() * couleurs.size());
+                    //System.out.println("random : "+nb);
+                    //System.out.println(" r: "+temp.getR()+" g: "+temp.getG()+" b: "+temp.getB());
+                    //System.out.println("color : "+couleurs.get(nb));
+                    temp.modifyColor((int)couleurs.get(nb)[0],(int)couleurs.get(nb)[1],(int)couleurs.get(nb)[2]);
+                    //System.out.println((couleurs.get(nb)[0]+" "+couleurs.get(nb)[1]+" "+couleurs.get(nb)[2]));
+                    //System.out.println("couleur modifiée");
+                    //System.out.println(" r: "+temp.getR()+" g: "+temp.getG()+" b: "+temp.getB());
+
+                    gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+                    for(appli.core.Shape shape : shapes_canvas){
+                        shape.draw(gc);
+                    }
+                    primaryStage.show();
+                }
             }else{
                 if(e.getX()>=0 && e.getX()<=shapes.getWidth() && e.getY()>shapes.getHeight() && e.getY()<=scene.getHeight()){
                     System.out.println("Forme supprimée"); 
                 }if(e.getX()>shapes.getWidth() && e.getX()<=scene.getWidth() && e.getY()>toolbar.getHeight() && e.getY()<=scene.getHeight()){
                     System.out.println("Forme droppée");
+                }
+                if(e.getX()>=0 && e.getX()<=shapes.getWidth() && e.getY()>toolbar.getHeight() && e.getY()<=shapes.getHeight()){
+                    System.out.println("Forme ajoutée à la toolbar");
                 }
             }
         });
@@ -203,6 +253,7 @@ public class WindowBuilder extends Application {
                 /*System.out.println("x: "+e.getX());
                 System.out.println("y: "+e.getY());
                 */
+                System.out.println("test");
                 
                 if(e.getX()>=0 && e.getX()<=shapes.getWidth() && e.getY()>shapes.getHeight() && e.getY()<=scene.getHeight()){
                     System.out.println("Forme supprimée"); 
@@ -210,17 +261,37 @@ public class WindowBuilder extends Application {
                 if(e.getX()>=0 && e.getX()<=shapes.getWidth() && e.getY()>toolbar.getHeight() && e.getY()<=shapes.getHeight()){
                     System.out.println("Forme ajoutée à la toolbar");
                 }
-                if(e.getX()>shapes.getWidth() && e.getX()<=scene.getWidth() && e.getY()>toolbar.getHeight() && e.getY()<=scene.getHeight()){
-                    System.out.println("Forme droppée");
+                if(e.getX()>shapes.getWidth() && e.getX()<=scene.getWidth() && e.getY()>=0 && e.getY()<=scene.getHeight()){
+                    System.out.println("Forme droppée ff");
                     if(shape_dragged!=null){
+                        System.out.println("Forme sélectionée");
+                        //System.out.println("Clic x: "+e.getX()+" y: "+e.getY());
+                        appli.core.Shape instance = shapes_toolbar.get(shape_dragged);
+                        if(instance instanceof appli.core.Rectangle){
+                            //System.out.println("Rectangle");
+                            appli.core.Rectangle bis = new appli.core.Rectangle((int)e.getX()-(int)shapes.getWidth()-25,(int)e.getY()-10, 50,  20);
+                            bis.modifyColor(instance.getR(), instance.getG(), instance.getB());
+                            shapes_canvas.add(bis);
+                        }
+
+                        //System.out.println(shapes_canvas);
+                        
+                        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+                        for(appli.core.Shape shape : shapes_canvas){
+                            shape.draw(gc);
+                        }
                         /*scene.getGra
                         shapes_toolbar.get(shape_dragged).draw(o);*/
+                        primaryStage.show();
                     }
                 }
             }
             
         });
         
+        canvas.setWidth(scene.getWidth()-shapes.getWidth());
+        canvas.setHeight(scene.getHeight()+toolbar.getHeight());
+        shapes.setPrefHeight(scene.getHeight()-50-toolbar.getHeight()-50);
 
         primaryStage.setScene(scene);
         primaryStage.show();

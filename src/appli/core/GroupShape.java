@@ -3,6 +3,7 @@ package appli.core;
 import java.util.HashSet;
 import java.util.Set;
 
+
 public class GroupShape extends AbstractShape {
 
     private Set<Shape> shapes=new HashSet<Shape>();
@@ -81,6 +82,12 @@ public class GroupShape extends AbstractShape {
     @Override
     public Set<Shape> getShapes() {
         return this.shapes;
+    }
+
+    @Override
+    public boolean pointIn(int x, int y) {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 

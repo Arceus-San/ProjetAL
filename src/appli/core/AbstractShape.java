@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+
 public abstract class AbstractShape implements Shape {
 
     private Point center;
@@ -20,6 +21,7 @@ public abstract class AbstractShape implements Shape {
         this.b=255;
         this.rotation=0.0;
     }
+
 
     @Override 
     public void move(int new_x, int new_y){
@@ -38,6 +40,9 @@ public abstract class AbstractShape implements Shape {
 
     @Override 
     public abstract void rotate(double angle);
+
+    @Override 
+    public abstract boolean pointIn(int x, int y);
 
     //Getters
     @Override 

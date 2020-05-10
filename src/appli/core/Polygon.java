@@ -3,12 +3,13 @@ package appli.core;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Polygon extends AbstractShape {
 
     private int nbSides;
     private double sideSize;
 
-    public Polygon(int origin_x, int origin_y, int nbSides, int sideSize){
+    public Polygon(int origin_x,int origin_y,int nbSides,int sideSize){
         super(origin_x, origin_y);
         this.nbSides=nbSides;
         this.sideSize=sideSize;
@@ -44,10 +45,10 @@ public class Polygon extends AbstractShape {
     /**
      * Create Polygon points method
      */
-    public List<Point> generatePolygonPoints(Point center, int nSides, float sideSize){
+    public List<Point> generatePolygonPoints(Point center, int nSides,double sideSize){
         List<Point> points = new ArrayList<Point>();
         for(int x = 0; x<nSides; x++) {
-            Point p = new Point(
+            final Point p = new Point(
                     (int)(center.getX() + sideSize/(2.0*Math.sin(Math.PI/nSides)) * Math.cos(2.0*Math.PI*x/nSides)), 
                     (int)(center.getY() + sideSize/(2.0*Math.sin(Math.PI/nSides)) * Math.sin(2.0*Math.PI*x/nSides))
             );
@@ -68,6 +69,20 @@ public class Polygon extends AbstractShape {
 	public AbstractShape clone() {
 		return super.clone();
 	}
+
+    @Override
+    public boolean pointIn(int x,int y) {
+        final List<Point> pointList = generatePolygonPoints( getCenter(), nbSides, sideSize);
+		 
+		 int i, j;
+	      boolean c = false;
+	      for (i = 0, j = pointList.size()-1; i < pointList.size(); j = i++) {
+	        if ( ((pointList.get(i).getY()>y) != (pointList.get(j).getY()>y)) &&
+	    	 (x < (pointList.get(j).getX()-pointList.get(i).getX()) * (y-pointList.get(i).getY()) / (pointList.get(j).getY()-pointList.get(i).getY()) + pointList.get(i).getX()) )
+	           c = !c;
+	      }
+	      return c;
+    }
 
 
 }

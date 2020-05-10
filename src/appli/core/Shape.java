@@ -2,6 +2,7 @@ package appli.core;
 
 import java.util.Set;
 
+
 public interface Shape extends Cloneable {
 
     //Modify fonctions
@@ -30,6 +31,9 @@ public interface Shape extends Cloneable {
     public AbstractShape clone();
 
     public void draw(Object o);
+
+
+    public boolean pointIn(int x, int y);
 
 
 }
