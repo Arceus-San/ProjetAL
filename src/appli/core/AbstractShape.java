@@ -5,21 +5,23 @@ import java.util.List;
 import java.util.Set;
 
 
-public abstract class AbstractShape implements Shape {
+public abstract class AbstractShape implements ShapeI {
 
     private Point center;
     private int r;
     private int g;
     private int b;
     private double rotation;
+    private Drawer drawer;
 
-    public AbstractShape(int origin_x, int origin_y){
+    public AbstractShape(int origin_x, int origin_y, Drawer d){
         this.center=new Point(origin_x,origin_y);
         //Dogerblue color (color in the toolbar)
         this.r=30;
         this.g=144;
         this.b=255;
         this.rotation=0.0;
+        this.drawer=d;
     }
 
 
@@ -70,6 +72,12 @@ public abstract class AbstractShape implements Shape {
         return this.b;
     }
 
+    @Override 
+    public Drawer getDrawer(){
+        return this.drawer;
+    }
+
+
     //Setters
     @Override 
     public void setCenter(int new_x, int new_y){
@@ -95,17 +103,17 @@ public abstract class AbstractShape implements Shape {
 
     //Composite
     @Override
-    public void addShape(Shape shape){
+    public void addShape(ShapeI shape){
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeShape(Shape shape) {
+    public void removeShape(ShapeI shape) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Set<Shape> getShapes() {
+    public Set<ShapeI> getShapes() {
         return Collections.emptySet();
     }
 

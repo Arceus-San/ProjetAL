@@ -3,14 +3,17 @@ package appli.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+
 
 public class Polygon extends AbstractShape {
 
     private int nbSides;
     private double sideSize;
 
-    public Polygon(int origin_x,int origin_y,int nbSides,int sideSize){
-        super(origin_x, origin_y);
+    public Polygon(int origin_x,int origin_y,int nbSides,double sideSize, Drawer d){
+        super(origin_x, origin_y, d);
         this.nbSides=nbSides;
         this.sideSize=sideSize;
     }
@@ -62,7 +65,21 @@ public class Polygon extends AbstractShape {
 
     @Override
     public void draw(Object o) {
-        // A faire avec un builder pour séparer les librairies graphiques
+        GraphicsContext gc = (GraphicsContext)o;
+        gc.setFill(Color.rgb(getR(), getG(), getB()));
+        Point center = getCenter();
+        //System.out.println("Center form : "+center.getX()+" "+center.getY());
+        //System.out.println("Width "+width);
+        //.out.println("Heigth : "+height);
+        List<Point> points = generatePolygonPoints(center, nbSides, sideSize);
+        double[] x = new double[points.size()];
+        double[] y = new double[points.size()];
+        for(int i=0;i<points.size();i++){
+            x[i]=(double)points.get(i).getX();
+            y[i]=(double)points.get(i).getY();
+        }
+        //gc.fillRect(center.getX()-(width/2), center.getY()-(height/2), width, height);
+        gc.fillPolygon(x, y, points.size());
     }
 
     @Override

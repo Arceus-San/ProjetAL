@@ -3,7 +3,7 @@ package appli.core;
 import java.util.Set;
 
 
-public interface Shape extends Cloneable {
+public interface ShapeI extends Cloneable {
 
     //Modify fonctions
     public void move(int new_x, int new_y);
@@ -17,15 +17,16 @@ public interface Shape extends Cloneable {
     public int getR();
     public int getG();
     public int getB();
+    public Drawer getDrawer();
 
     //Setters
     public void setCenter(int new_x, int new_y);
     public void setRotation(double new_rotation);
 
     //Composite
-    public void addShape(Shape shape);
-    public void removeShape(Shape shape);
-    public Set<Shape> getShapes();
+    public void addShape(ShapeI shape);
+    public void removeShape(ShapeI shape);
+    public Set<ShapeI> getShapes();
 
     //Others
     public AbstractShape clone();

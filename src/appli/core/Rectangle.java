@@ -1,16 +1,13 @@
 package appli.core;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-
 public class Rectangle extends AbstractShape {
 
     private int width;
     private int height;
     private boolean arcRound;
 
-    public Rectangle(int origin_x, int origin_y, int width, int height){
-        super(origin_x+width/2,origin_y+height/2);
+    public Rectangle(int origin_x, int origin_y, int width, int height, Drawer drawer){
+        super(origin_x+width/2,origin_y+height/2, drawer);
         this.width=width;
         this.height=height;
         this.arcRound=false;
@@ -36,14 +33,6 @@ public class Rectangle extends AbstractShape {
         return this.height;
     }
 
-    public void setWidth(int new_width){
-        this.width=new_width;
-    }
-
-    public void setHeight(int new_height){
-        this.width=new_height;
-    }
-
     public void setArcRound(boolean arcRound){
         this.arcRound=arcRound;
     }
@@ -55,13 +44,12 @@ public class Rectangle extends AbstractShape {
 
     @Override
     public void draw(Object o) {
-        GraphicsContext gc = (GraphicsContext)o;
-        gc.setFill(Color.rgb(getR(), getG(), getB()));
+        getDrawer().setColor(o, getR(), getG(), getB());
         Point center = getCenter();
         //System.out.println("Center form : "+center.getX()+" "+center.getY());
         //System.out.println("Width "+width);
         //.out.println("Heigth : "+height);
-        gc.fillRect(center.getX()-(width/2), center.getY()-(height/2), width, height);
+        getDrawer().drawRectangle(o, center.getX(), center.getY(), width, height);
     }
 
     @Override
