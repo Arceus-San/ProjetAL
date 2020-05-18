@@ -3,6 +3,7 @@ package appli.core;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+//Permet de dessiner avec JavaFX
 public class DrawerJavaFX implements Drawer {
 
     @Override

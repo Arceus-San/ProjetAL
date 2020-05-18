@@ -27,10 +27,19 @@ public class AppCenter {
         return instance;
     }
 
+    public SuperToolbar getSuperToolbar(){
+        return this.toolbar_shapes;
+    }
+
+    public Drawer getDrawer(){
+        return this.drawer;
+    }
+
     public void setDrawer(Drawer d){
         this.drawer=d;
     }
 
+    //Renvoie la Shape associée au click sur le canvas
     public ShapeI getShapeFromClick(int x, int y){
         ShapeI res=null;
         for(ShapeI shape : canvas_shapes){
@@ -42,6 +51,7 @@ public class AppCenter {
         return res;
     }
 
+    //Dessine les formes sur le canvas
     public void draw(Object o, int width, int height){
         drawer.cleanCanvas(o, width, height);
         for(ShapeI shape : canvas_shapes){
@@ -49,6 +59,7 @@ public class AppCenter {
         }
     }
 
+    //Supprime la forme associée au click sur le Canvas
     public void deleteShape(int x, int y){
         ShapeI res=getShapeFromClick(x, y);
         if(canvas_shapes.contains(res)){
@@ -56,17 +67,37 @@ public class AppCenter {
         }
     }
 
+    //Déplace la shape associée au click sur le canvas
     public void moveShape(int origin_x, int origin_y, int new_x, int new_y){
         ShapeI res=getShapeFromClick(origin_x, origin_y);
         if(res!=null){
-            res.setCenter(new_x, new_y);
+            res.move(origin_x,origin_y,new_x, new_y);
         }
     }
 
+    //Ajoute une shape au canvas
     public void addShapeToCanvas(ShapeI shape, int x, int y){
         shape.setCenter(x, y);
         canvas_shapes.add(shape);
-        System.out.println(canvas_shapes);
+    }
+
+    //Regroupe les formes de la sélection dans un seul ShapeGroup
+    public void groupSelection(int origin_x, int origin_y, int new_x, int new_y){
+        List<ShapeI> selection = new ArrayList<ShapeI>();
+        for(ShapeI shape : canvas_shapes){
+            if(origin_x<=shape.getCenter().getX() && shape.getCenter().getX()<=new_x && origin_y<=shape.getCenter().getY() && shape.getCenter().getY()<=new_y){
+                selection.add(shape);
+            }
+        }
+        if(selection.size()>1){
+            GroupShape group = new GroupShape(origin_x, origin_y, new_x-origin_x, new_y-origin_y, drawer);
+            for(ShapeI shape : selection){
+                group.addShape(shape);
+                canvas_shapes.remove(shape);
+            }
+            canvas_shapes.add(group);
+        }
+        
     }
 
 }

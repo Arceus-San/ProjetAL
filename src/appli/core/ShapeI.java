@@ -6,7 +6,7 @@ import java.util.Set;
 public interface ShapeI extends Cloneable {
 
     //Modify fonctions
-    public void move(int new_x, int new_y);
+    public void move(int old_x, int old_y, int new_x, int new_y);
     public void modifyColor(int new_r, int new_g, int new_b);
     public void scale(double size);
     public void rotate(double angle);
@@ -30,10 +30,7 @@ public interface ShapeI extends Cloneable {
 
     //Others
     public AbstractShape clone();
-
     public void draw(Object o);
-
-
     public boolean pointIn(int x, int y);
 
 

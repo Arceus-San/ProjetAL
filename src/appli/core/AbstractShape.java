@@ -26,8 +26,8 @@ public abstract class AbstractShape implements ShapeI {
 
 
     @Override 
-    public void move(int new_x, int new_y){
-        this.setCenter(new_y,new_y);
+    public void move(int old_x, int old_y, int new_x, int new_y){
+        setCenter(new_x,new_y);
     }
 
     @Override 

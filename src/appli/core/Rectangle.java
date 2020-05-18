@@ -25,6 +25,27 @@ public class Rectangle extends AbstractShape {
 
     }
 
+    @Override
+	public AbstractShape clone() {
+		return super.clone();
+	}
+
+    @Override
+    public void draw(Object o) {
+        getDrawer().setColor(o, getR(), getG(), getB());
+        Point center = getCenter();
+        getDrawer().drawRectangle(o, center.getX(), center.getY(), width, height);
+    }
+
+    @Override
+    public boolean pointIn(int x, int y) {
+        Point c = getCenter();
+        if(x>=c.getX()-width/2 && x<=c.getX()+width/2 && y>=c.getY()-height/2 && y<=c.getY()+height/2) {
+			return true;
+		}
+		return false;
+    }
+
     public int getWidth(){
         return this.width;
     }
@@ -35,32 +56,6 @@ public class Rectangle extends AbstractShape {
 
     public void setArcRound(boolean arcRound){
         this.arcRound=arcRound;
-    }
-
-    @Override
-	public AbstractShape clone() {
-		return super.clone();
-	}
-
-    @Override
-    public void draw(Object o) {
-        getDrawer().setColor(o, getR(), getG(), getB());
-        Point center = getCenter();
-        //System.out.println("Center form : "+center.getX()+" "+center.getY());
-        //System.out.println("Width "+width);
-        //.out.println("Heigth : "+height);
-        getDrawer().drawRectangle(o, center.getX(), center.getY(), width, height);
-    }
-
-    @Override
-    public boolean pointIn(int x, int y) {
-        Point c = getCenter();
-        //System.out.println("haut gauche "+(int)(getCenter().getX()-width/2)+" "+(int)(getCenter().getY()-height/2));
-        //System.out.println("bas droit "+(int)(getCenter().getX()+width/2)+" "+(int)(getCenter().getY()+height/2));
-        if(x>=c.getX()-width/2 && x<=c.getX()+width/2 && y>=c.getY()-height/2 && y<=c.getY()+height/2) {
-			return true;
-		}
-		return false;
     }
 
     

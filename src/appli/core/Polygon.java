@@ -29,6 +29,39 @@ public class Polygon extends AbstractShape {
 
     }
 
+    @Override
+    public void draw(Object o) {
+        GraphicsContext gc = (GraphicsContext)o;
+        gc.setFill(Color.rgb(getR(), getG(), getB()));
+        Point center = getCenter();
+        List<Point> points = generatePolygonPoints(center, nbSides, sideSize);
+        double[] x = new double[points.size()];
+        double[] y = new double[points.size()];
+        for(int i=0;i<points.size();i++){
+            x[i]=(double)points.get(i).getX();
+            y[i]=(double)points.get(i).getY();
+        }
+        gc.fillPolygon(x, y, points.size());
+    }
+
+    @Override
+	public AbstractShape clone() {
+		return super.clone();
+	}
+
+    @Override
+    public boolean pointIn(int x,int y) {
+        final List<Point> pointList = generatePolygonPoints( getCenter(), nbSides, sideSize);
+		int i, j;
+	    boolean c = false;
+	    for (i = 0, j = pointList.size()-1; i < pointList.size(); j = i++) {
+	        if ( ((pointList.get(i).getY()>y) != (pointList.get(j).getY()>y)) &&
+	    	(x < (pointList.get(j).getX()-pointList.get(i).getX()) * (y-pointList.get(i).getY()) / (pointList.get(j).getY()-pointList.get(i).getY()) + pointList.get(i).getX()) )
+	        c = !c;
+	    }
+	    return c;
+    }
+
     public int getNbSides(){
         return this.nbSides;
     }
@@ -45,9 +78,7 @@ public class Polygon extends AbstractShape {
         this.nbSides=nb_sides;
     }
 
-    /**
-     * Create Polygon points method
-     */
+    //Renvoie les coordonnées des points pour le polygone avec les valeurs en paramètre
     public List<Point> generatePolygonPoints(Point center, int nSides,double sideSize){
         List<Point> points = new ArrayList<Point>();
         for(int x = 0; x<nSides; x++) {
@@ -57,48 +88,8 @@ public class Polygon extends AbstractShape {
             );
             points.add(p);
         }
-        
         points = rotation(points);
-        
         return points;
-}
-
-    @Override
-    public void draw(Object o) {
-        GraphicsContext gc = (GraphicsContext)o;
-        gc.setFill(Color.rgb(getR(), getG(), getB()));
-        Point center = getCenter();
-        //System.out.println("Center form : "+center.getX()+" "+center.getY());
-        //System.out.println("Width "+width);
-        //.out.println("Heigth : "+height);
-        List<Point> points = generatePolygonPoints(center, nbSides, sideSize);
-        double[] x = new double[points.size()];
-        double[] y = new double[points.size()];
-        for(int i=0;i<points.size();i++){
-            x[i]=(double)points.get(i).getX();
-            y[i]=(double)points.get(i).getY();
-        }
-        //gc.fillRect(center.getX()-(width/2), center.getY()-(height/2), width, height);
-        gc.fillPolygon(x, y, points.size());
-    }
-
-    @Override
-	public AbstractShape clone() {
-		return super.clone();
-	}
-
-    @Override
-    public boolean pointIn(int x,int y) {
-        final List<Point> pointList = generatePolygonPoints( getCenter(), nbSides, sideSize);
-		 
-		 int i, j;
-	      boolean c = false;
-	      for (i = 0, j = pointList.size()-1; i < pointList.size(); j = i++) {
-	        if ( ((pointList.get(i).getY()>y) != (pointList.get(j).getY()>y)) &&
-	    	 (x < (pointList.get(j).getX()-pointList.get(i).getX()) * (y-pointList.get(i).getY()) / (pointList.get(j).getY()-pointList.get(i).getY()) + pointList.get(i).getX()) )
-	           c = !c;
-	      }
-	      return c;
     }
 
 

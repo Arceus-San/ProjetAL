@@ -8,18 +8,19 @@ import appli.core.Point;
 import appli.core.Polygon;
 import appli.core.Rectangle;
 import appli.core.ShapeI;
+import javafx.scene.Node;
 import javafx.scene.control.ToolBar;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Shape;
 
+//Représente la structure SuperToolBar en JavaFX
 public class JFXSuperToolBar implements SuperToolbar {
 
     public ToolBar toolbar;
-    public HashMap<Shape,ShapeI> shapes;
+    public HashMap<Node,ShapeI> shapes;
 
     public JFXSuperToolBar(){
         this.toolbar = new ToolBar();
-        this.shapes = new HashMap<Shape,ShapeI>();
+        this.shapes = new HashMap<Node,ShapeI>();
     }
 
     @Override
