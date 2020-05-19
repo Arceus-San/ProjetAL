@@ -20,7 +20,7 @@ public class Polygon extends AbstractShape {
 
     @Override
     public void scale(double size) {
-        this.sideSize=this.sideSize*size;
+        this.sideSize=(double)this.sideSize*size;
     }
 
     @Override

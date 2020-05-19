@@ -128,6 +128,14 @@ public class GroupShape extends AbstractShape {
         return this.height;
     }
 
+    public void setWidth(int w){
+        width=w;
+    }
+
+    public void setHeight(int h){
+        height=h;
+    }
+
     public List<ShapeI> getPrimaryShapes(){
         List<ShapeI> list = new ArrayList<ShapeI>();
         for(ShapeI shape : shapes){

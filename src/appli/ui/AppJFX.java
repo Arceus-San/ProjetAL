@@ -15,6 +15,10 @@ import appli.core.Point;
 import appli.core.Polygon;
 import appli.core.Rectangle;
 import appli.core.ShapeI;
+import appli.factory.GroupMenu;
+import appli.factory.JFXPopUpMenuFactory;
+import appli.factory.PolygonMenu;
+import appli.factory.RectangleMenu;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -29,7 +33,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -38,8 +41,8 @@ import javafx.stage.Stage;
 
 public class AppJFX extends Application implements AppManager {
 
-    private Stage ps;
-    private GraphicsContext gc;
+    private static Stage ps;
+    public static GraphicsContext gc;
     private Scene scene;
     private double menuHeight;
     private double toolbarWidth;
@@ -48,8 +51,8 @@ public class AppJFX extends Application implements AppManager {
     private double sceneHeight;
     private double sizeBin;
     private boolean select;
-    private double canvasHeight;
-    private double canvasWidth;
+    public static double canvasHeight;
+    public static double canvasWidth;
 
     private double drag_x;
     private double drag_y;
@@ -59,7 +62,7 @@ public class AppJFX extends Application implements AppManager {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        //Initialisation des structures spécifiques JFX : Drawer + Toolbar
+        // Initialisation des structures spécifiques JFX : Drawer + Toolbar
         Drawer drawer = new DrawerJavaFX();
 
         JFXToolBarBuilder toolbarbuilder = new JFXToolBarBuilder();
@@ -71,7 +74,7 @@ public class AppJFX extends Application implements AppManager {
         appcenter.setDrawer(drawer);
         appcenter.setSuperToolbar(st);
 
-        //Liste de couleurs pour quand on clique
+        // Liste de couleurs pour quand on clique
         couleurs = new ArrayList<int[]>();
         int[] black = { 0, 0, 0 };
         int[] red = { 255, 0, 0 };
@@ -84,7 +87,7 @@ public class AppJFX extends Application implements AppManager {
         couleurs.add(blue);
         couleurs.add(purple);
 
-        //Création des boutons du menu et de leurs events associés
+        // Création des boutons du menu et de leurs events associés
         Button save = new Button("Save");
         Button load = new Button("Load");
         Button undo = new Button("Undo");
@@ -118,7 +121,7 @@ public class AppJFX extends Application implements AppManager {
             }
         });
 
-        //Création de la structure de la fenêtre (toolbar + menu + canvas + corbeille)
+        // Création de la structure de la fenêtre (toolbar + menu + canvas + corbeille)
         ToolBar toolbar = new ToolBar(save, load, undo, redo);
         st.toolbar.setOrientation(Orientation.VERTICAL);
         InputStream input = getClass().getResourceAsStream("iconfinder_trash_115789.png");
@@ -141,43 +144,41 @@ public class AppJFX extends Application implements AppManager {
         hbox.setHgrow(canvas, Priority.ALWAYS);
         VBox vbox3 = new VBox(toolbar, hbox);
         vbox3.setVgrow(hbox, Priority.ALWAYS);
-        GridPane grid = new GridPane();
         Scene scene = new Scene(vbox3, 640, 400);
         st.toolbar.setPrefHeight(scene.getHeight() - sizeBin - toolbar.getHeight() - sizeBin);
 
-        //Sauvegarde des des longueurs et largeurs des composants
+        // Sauvegarde des des longueurs et largeurs des composants
         this.gc = canvas.getGraphicsContext2D();
         this.menuHeight = toolbar.getHeight();
         this.toolbarWidth = st.toolbar.getWidth();
         this.toolbarHeight = st.toolbar.getHeight();
         this.sceneHeight = scene.getHeight();
         this.sceneWidth = scene.getWidth();
-        this.scene=scene;
+        this.scene = scene;
 
-
-        //Ajout des listener aux items de la toolbar
+        // Ajout des listener aux items de la toolbar
         for (Node node : st.toolbar.getItems()) {
             this.addEvent(node);
         }
 
-        //Ajout des events pour pouvoir drag and drop
+        // Ajout des events pour pouvoir drag and drop
         addMousePressedScene();
         addMouseReleasedScene();
         addEventSelection();
         addMousePressedToolbar();
         addMouseReleasedToolbar();
 
+        // On défini la taille du canvas en fonction de la taille de la fenêtre et des
+        // composants
+        canvas.setWidth(sceneWidth - toolbarWidth);
+        canvas.setHeight(sceneHeight + toolbarHeight);
 
-        //On défini la taille du canvas en fonction de la taille de la fenêtre et des composants
-        canvas.setWidth(sceneWidth-toolbarWidth);
-        canvas.setHeight(sceneHeight+toolbarHeight);
-
-        //On affiche la scene
+        // On affiche la scene
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        //On actualise les valeurs des longueurs et largeurs des composants
-        this.ps=primaryStage;
+        // On actualise les valeurs des longueurs et largeurs des composants
+        this.ps = primaryStage;
         this.gc = canvas.getGraphicsContext2D();
         this.menuHeight = toolbar.getHeight();
         this.toolbarWidth = st.toolbar.getWidth();
@@ -186,20 +187,17 @@ public class AppJFX extends Application implements AppManager {
         this.sceneWidth = scene.getWidth();
         this.canvasHeight = canvas.getHeight();
         this.canvasWidth = canvas.getWidth();
-    
 
     }
 
-
-    //Renvoie le contexte graphique du canvas pour dessiner les formes
+    // Renvoie le contexte graphique du canvas pour dessiner les formes
     @Override
     public Object getGraphicContext() {
         return this.gc;
     }
 
-    //Actualise la fenêtre
-    @Override
-    public void update() {
+    // Actualise la fenêtre
+    public static void update() {
         ps.show();
     }
 
@@ -302,12 +300,20 @@ public class AppJFX extends Application implements AppManager {
             else if (e.getX() == drag_x && e.getY() == drag_y && !e.getButton().equals(MouseButton.SECONDARY)) {
                 //On récupère la forme correspondante au click (null si aucune ne correspond)
                 ShapeI temp = AppCenter.getInstance().getShapeFromClick((int) (e.getX() - toolbarWidth),(int) (e.getY()-menuHeight));
-                //Si on a bien cliqué sur une forme on modifie sa couleur (aléatoire parmi la liste)
+                //Si on a bien cliqué sur une forme on affiche son menu
                 if (temp != null) {
-                    int nb = (int) (Math.random() * couleurs.size());
-                    temp.modifyColor((int) couleurs.get(nb)[0], (int) couleurs.get(nb)[1], (int) couleurs.get(nb)[2]);
-                    AppCenter.getInstance().draw(gc, (int) canvasWidth, (int) canvasHeight);
-                    this.update();
+                    if(temp instanceof Rectangle){
+                        JFXPopUpMenuFactory factory = new RectangleMenu();
+                        factory.getShapeMenu((int)(drag_x-toolbarWidth),(int)(drag_y-menuHeight));
+                    }
+                    else if(temp instanceof Polygon){
+                        JFXPopUpMenuFactory factory = new PolygonMenu();
+                        factory.getShapeMenu((int)(drag_x-toolbarWidth),(int)(drag_y-menuHeight));
+                    }
+                    else if(temp instanceof GroupShape){
+                        JFXPopUpMenuFactory factory = new GroupMenu();
+                        factory.getShapeMenu((int)(drag_x-toolbarWidth),(int)(drag_y-menuHeight));
+                    }
                 }
             } 
             //Si on a cliqué avec le bouton droit
@@ -349,7 +355,11 @@ public class AppJFX extends Application implements AppManager {
                     //Si c'est un rectangle on crée le rectangle Javafx associé et on l'ajoute à la toolbar
                     if(shape instanceof Rectangle){
                         Rectangle clone = (Rectangle)shape.clone();
-                        javafx.scene.shape.Rectangle rec = new javafx.scene.shape.Rectangle(clone.getWidth(), clone.getHeight(),Color.rgb(clone.getR(),clone.getG(), clone.getB()));
+                        double coef = 1;
+                        if(clone.getWidth()>50){
+                            coef=50.0/(double)clone.getWidth();
+                        }
+                        javafx.scene.shape.Rectangle rec = new javafx.scene.shape.Rectangle(clone.getWidth()*coef, clone.getHeight()*coef,Color.rgb(clone.getR(),clone.getG(), clone.getB()));
                         this.addEvent(rec);
                         //On associe le rectangle du canvas au rectangle javafx dans la hashmap de SuperToolbar
                         //On pourra ensuite le récupérer pour le cloner et le re-dessiner sur le canvas quand on fera un drag and drop depuis la toolbar
@@ -360,7 +370,27 @@ public class AppJFX extends Application implements AppManager {
                     //Même opération avec le Polygone
                     }else if(shape instanceof Polygon){
                         Polygon clone = (Polygon)shape.clone();
+                        List<Point> points = clone.generatePolygonPoints(clone.getCenter(), clone.getNbSides(),clone.getSideSize());
+                        double[] x = new double[points.size()];
+                        double min=1000.0;
+                        double max=-1000.0;
+                        for(int i=0;i<points.size();i++){
+                            x[i]=(double)points.get(i).getX();
+                            if(x[i]<min){
+                                min=x[i];
+                            }
+                            if(x[i]>max){
+                                max=x[i];
+                            }
+                        }
                         javafx.scene.shape.Polygon poly = new javafx.scene.shape.Polygon(pointsPoly(clone));
+                        if(!(max-min<=50)){
+                            double coef = 50.0/(max-min);
+                            Polygon clone2 = (Polygon) clone.clone();
+                            clone2.scale(coef);
+                            poly = new javafx.scene.shape.Polygon(pointsPoly(clone2));
+                        }
+
                         poly.setFill(Color.rgb(clone.getR(), clone.getG(), clone.getB()));
                         this.addEvent(poly);
                         JFXSuperToolBar toolbar = (JFXSuperToolBar) AppCenter.getInstance().getSuperToolbar();
@@ -506,6 +536,8 @@ public class AppJFX extends Application implements AppManager {
         AppCenter.getInstance().draw(gc, (int)canvasWidth, (int)canvasHeight);
         this.update();
     }
+
+
 
 
     public static void main(String[] args) {

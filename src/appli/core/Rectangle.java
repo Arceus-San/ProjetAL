@@ -15,8 +15,8 @@ public class Rectangle extends AbstractShape {
 
     @Override
 	public void scale(double size) {
-		this.height=(int)(this.height*size);
-		this.width=(int)(this.width*size);	
+		this.height=(int)((double)this.height*size);
+		this.width=(int)((double)this.width*size);	
     }
 
     @Override
@@ -56,6 +56,18 @@ public class Rectangle extends AbstractShape {
 
     public void setArcRound(boolean arcRound){
         this.arcRound=arcRound;
+    }
+
+    public boolean getArcRound(){
+        return this.arcRound;
+    }
+
+    public void setWidth(int w){
+        width=w;
+    }
+
+    public void setHeight(int h){
+        height=h;
     }
 
     

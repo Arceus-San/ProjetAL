@@ -100,4 +100,47 @@ public class AppCenter {
         
     }
 
+    //Modifie la couleur de la forme aux coordonnées x et y
+    public void changeColor(int x, int y, int r, int g, int b){
+        ShapeI shape = getShapeFromClick(x, y);
+        System.out.println(shape);
+        shape.modifyColor(r, g, b);
+    }
+
+    //Défini si le rectangle au coordonnées x et y à les bords arrondis
+    public void roundBorders(int x, int y, boolean b){
+        Rectangle shape = (Rectangle) getShapeFromClick(x, y);
+        shape.setArcRound(b);
+    }
+
+    //Redimmensionne la forme aux coordonées en fonction du coefficient
+    public void scale(int x, int y, double multiplier){
+        ShapeI shape = getShapeFromClick(x, y);
+        shape.scale(multiplier);
+    }
+
+    //Modifie la longueur du rectangle en x et y
+    public void modifyWidth(int x, int y, int width){
+        Rectangle shape = (Rectangle) getShapeFromClick(x, y);
+        shape.setWidth(width);
+    }
+
+    //Modifie la largeur du rectangle en x et y
+    public void modifyHeight(int x, int y, int height){
+        Rectangle shape = (Rectangle) getShapeFromClick(x, y);
+        shape.setHeight(height);
+    }
+
+    //Modifie le nombre de côtés du polygone en x et y
+    public void modifyNbSides(int x, int y, int nbSides){
+        Polygon shape = (Polygon) getShapeFromClick(x, y);
+        shape.setNbSides(nbSides);
+    }
+
+    //Modifie la taille des côtés du polygone en x et y
+    public void modifySideSize(int x, int y, int sideSize){
+        Polygon shape = (Polygon) getShapeFromClick(x, y);
+        shape.setSideSize(sideSize);
+    }
+
 }
